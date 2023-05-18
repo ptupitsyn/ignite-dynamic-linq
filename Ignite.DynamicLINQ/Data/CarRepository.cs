@@ -4,14 +4,12 @@ public class CarRepository
 {
     private readonly IgniteService _igniteService;
 
-    public CarRepository(IgniteService igniteService)
-    {
-        _igniteService = igniteService;
-    }
+    public CarRepository(IgniteService igniteService) => _igniteService = igniteService;
 
-    public void GetCars()
+    public List<Car> GetCars(string? make, string? model, int? year, SearchMode? searchMode)
     {
         // TODO: Dynamic column list as well as dynamic filters?
         var cache = _igniteService.Cars;
+        throw new NotImplementedException();
     }
 }

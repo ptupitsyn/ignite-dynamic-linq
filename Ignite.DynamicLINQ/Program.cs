@@ -13,9 +13,9 @@ app.MapGet("/", () => "Hello World!");
 app.MapGet(
         "/cars",
         (string? make,
-                string? model,
-                int? year,
-                SearchMode? searchMode,
-                [FromServices] CarRepository repo) => repo.GetCars()); // TODO
+         string? model,
+         int? year,
+         SearchMode? searchMode,
+         [FromServices] CarRepository repo) => repo.GetCars(make, model, year, searchMode));
 
 app.Run();
