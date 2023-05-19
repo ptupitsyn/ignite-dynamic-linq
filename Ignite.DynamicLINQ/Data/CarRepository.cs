@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using Apache.Ignite.Core.Cache.Query;
 using Apache.Ignite.Linq;
 
 namespace Ignite.DynamicLINQ.Data;
@@ -85,5 +86,12 @@ public class CarRepository
 
             return query.Where(expression);
         }
+    }
+
+    public List<Car> GetCarsSql(string? make, string? model, int? year, SearchMode searchMode, string[]? columns = null)
+    {
+        return _igniteService.Cars.Query(new SqlFieldsQuery("SELECT Make, Model, Year FROM Car"))
+            .Select(x => new Car((string)x[0], (string)x[1], (int)x[2]))
+            .ToList();
     }
 }
