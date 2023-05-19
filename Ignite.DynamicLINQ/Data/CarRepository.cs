@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Linq.Expressions;
 using Apache.Ignite.Linq;
 
@@ -10,9 +9,8 @@ public class CarRepository
 
     public CarRepository(IgniteService igniteService) => _igniteService = igniteService;
 
-    public List<Car> GetCars(string? make, string? model, int? year, SearchMode searchMode, string[]? columns = null)
+    public List<Car> GetCarsLinq(string? make, string? model, int? year, SearchMode searchMode, string[]? columns = null)
     {
-        // TODO: Dynamic column list as well as dynamic filters?
         IQueryable<Car> query = _igniteService.Cars
             .AsCacheQueryable()
             .Select(x => x.Value);
@@ -28,7 +26,8 @@ public class CarRepository
 
         if (columns != null)
         {
-            // Bad attempt to avoid over-fetching.
+            // Bad attempt to have a custom column list:
+            // Conditions will be translated to CASEWHEN, resulting in unnecessary complexity in the generated SQL.
             query = query.Select(x => new Car(
                 columns.Contains(nameof(Car.Make))? x.Make : null!,
                 columns.Contains(nameof(Car.Model))? x.Model : null!,

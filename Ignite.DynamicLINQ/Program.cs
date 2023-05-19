@@ -16,7 +16,8 @@ app.MapGet(
          string? model,
          int? year,
          SearchMode? searchMode,
+         string? columns,
          [FromServices] CarRepository repo) =>
-            repo.GetCars(make, model, year, searchMode ?? SearchMode.All));
+            repo.GetCarsLinq(make, model, year, searchMode ?? SearchMode.All, columns?.Split(',')));
 
 app.Run();

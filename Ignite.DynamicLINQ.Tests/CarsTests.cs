@@ -30,7 +30,7 @@ public class CarsTests
     [Test]
     public async Task TestGetCars([Values(SearchMode.All, SearchMode.Any)] SearchMode searchMode)
     {
-        var cars = await GetCars("make=Ford&model=Mustang&searchMode=" + searchMode);
+        var cars = await GetCars($"make=Ford&model=Mustang&searchMode={searchMode}&columns=Make,Model");
 
         Assert.AreEqual(1, cars.Count);
     }
