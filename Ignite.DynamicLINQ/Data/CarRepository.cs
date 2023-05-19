@@ -1,4 +1,6 @@
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
+using System.Text;
 using Apache.Ignite.Core.Cache.Query;
 using Apache.Ignite.Linq;
 
@@ -6,6 +8,8 @@ namespace Ignite.DynamicLINQ.Data;
 
 public class CarRepository
 {
+    private static readonly string[] AllColumns = { nameof(Car.Make), nameof(Car.Model), nameof(Car.Year) };
+
     private readonly IgniteService _igniteService;
 
     public CarRepository(IgniteService igniteService) => _igniteService = igniteService;
@@ -90,8 +94,37 @@ public class CarRepository
 
     public List<Car> GetCarsSql(string? make, string? model, int? year, SearchMode searchMode, string[]? columns = null)
     {
-        return _igniteService.Cars.Query(new SqlFieldsQuery("SELECT Make, Model, Year FROM Car"))
-            .Select(x => new Car((string)x[0], (string)x[1], (int)x[2]))
+        var cols = (columns?.Intersect(AllColumns) ?? AllColumns).ToList();
+        var sb = new StringBuilder("SELECT ")
+            .Append(string.Join(", ", cols))
+            .Append(" FROM Car");
+
+        var argIdx = 0;
+        var args = new List<object>();
+        AppendArg(make);
+        AppendArg(model);
+        AppendArg(year);
+
+        return _igniteService.Cars.Query(new SqlFieldsQuery(sb.ToString(), args.ToArray()))
+            .Select(x => new Car(
+                Val<string>(x, nameof(Car.Make)),
+                Val<string>(x, nameof(Car.Model)),
+                Val<int>(x, nameof(Car.Year))))
             .ToList();
+
+        void AppendArg(object? value, [CallerArgumentExpression(nameof(value))] string? name = default)
+        {
+            if (value != null)
+            {
+                sb.Append(argIdx++ == 0
+                    ? " WHERE "
+                    : searchMode == SearchMode.All ? " AND " : " OR ");
+
+                sb.Append($"{name} = ? ");
+                args.Add(value);
+            }
+        }
+
+        T Val<T>(IList<object> row, string name) => cols.IndexOf(name) is var y and >= 0 ? (T)row[y] : default!;
     }
 }
