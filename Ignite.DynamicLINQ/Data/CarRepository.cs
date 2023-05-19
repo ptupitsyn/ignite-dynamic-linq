@@ -127,9 +127,9 @@ public class CarRepository
             {
                 sb.Append(argIdx++ == 0
                     ? " WHERE "
-                    : searchMode == SearchMode.All ? " AND " : " OR ");
+                    : searchMode == SearchMode.All ? " AND " : " OR ")
+                    .Append($"{name} = ? ");
 
-                sb.Append($"{name} = ? ");
                 args.Add(value);
             }
         }
