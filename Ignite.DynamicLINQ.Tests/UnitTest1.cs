@@ -1,15 +1,32 @@
+using Microsoft.AspNetCore.Mvc.Testing;
+
 namespace Ignite.DynamicLINQ.Tests;
 
-public class Tests
+public class CarsTests
 {
-    [SetUp]
-    public void Setup()
+    private WebApplicationFactory<Program> _application = null!;
+    private HttpClient _client = null!;
+
+    [OneTimeSetUp]
+    public void OneTimeSetUp()
     {
+        _application = new WebApplicationFactory<Program>();
+        _client = _application.CreateClient();
+    }
+
+    [OneTimeTearDown]
+    public void OneTimeTearDown()
+    {
+        _client.Dispose();
+        _application.Dispose();
     }
 
     [Test]
-    public void Test1()
+    public async Task TestGetCars()
     {
-        Assert.Pass();
+        using var res = _client.GetAsync("cars");
+        var content = await res.Result.Content.ReadAsStringAsync();
+
+        Assert.That(content, Is.EqualTo("[]"));
     }
 }
