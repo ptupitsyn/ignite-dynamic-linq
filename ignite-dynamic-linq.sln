@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ignite.DynamicLINQ", "Ignite.DynamicLINQ\Ignite.DynamicLINQ.csproj", "{D46A96C2-1AE0-4FCE-8584-9E1ECB193485}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ignite.DynamicLINQ.Tests", "Ignite.DynamicLINQ.Tests\Ignite.DynamicLINQ.Tests.csproj", "{1F4BC314-E675-41BD-99D7-98650133C018}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{D46A96C2-1AE0-4FCE-8584-9E1ECB193485}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D46A96C2-1AE0-4FCE-8584-9E1ECB193485}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D46A96C2-1AE0-4FCE-8584-9E1ECB193485}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F4BC314-E675-41BD-99D7-98650133C018}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F4BC314-E675-41BD-99D7-98650133C018}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F4BC314-E675-41BD-99D7-98650133C018}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F4BC314-E675-41BD-99D7-98650133C018}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
