@@ -1,3 +1,5 @@
+using System.Net;
+using System.Text.Json;
 using Ignite.DynamicLINQ.Data;
 using Microsoft.AspNetCore.Mvc.Testing;
 
@@ -28,25 +30,18 @@ public class CarsTests
     [Test]
     public async Task TestGetCars()
     {
-        using var res = _client.GetAsync("cars");
-        var content = await res.Result.Content.ReadAsStringAsync();
+        var cars = await GetCars("make=Ford&model=Mustang&searchMode=All");
 
-        var expectedContent = """
-            [
-              {
-                "make": "Ford",
-                "model": "Mustang",
-                "year": 1967,
-                "color": "Red",
-                "bodyType": "Sedan",
-                "engineType": "Petrol",
-                "engineCc": 7000,
-                "engineHp": 335,
-                "price": 25000
-              }
-            ]
-            """;
+        Assert.AreEqual(1, cars.Count);
+    }
 
-        Assert.That(content, Is.EqualTo(expectedContent));
+    private async Task<List<Car>> GetCars(string query)
+    {
+        using var res = await _client.GetAsync("cars?" + query);
+        var content = await res.Content.ReadAsStringAsync();
+
+        Assert.AreEqual(HttpStatusCode.OK, res.StatusCode, content);
+
+        return JsonSerializer.Deserialize<List<Car>>(content)!;
     }
 }
