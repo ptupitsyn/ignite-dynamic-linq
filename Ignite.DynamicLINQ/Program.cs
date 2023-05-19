@@ -16,6 +16,7 @@ app.MapGet(
          string? model,
          int? year,
          SearchMode? searchMode,
-         [FromServices] CarRepository repo) => repo.GetCars(make, model, year, searchMode));
+         [FromServices] CarRepository repo) =>
+            repo.GetCars(make, model, year, searchMode ?? SearchMode.All));
 
 app.Run();
