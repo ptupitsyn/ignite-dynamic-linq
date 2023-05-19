@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Linq.Expressions;
 using Apache.Ignite.Linq;
 
@@ -9,14 +10,34 @@ public class CarRepository
 
     public CarRepository(IgniteService igniteService) => _igniteService = igniteService;
 
-    public List<Car> GetCars(string? make, string? model, int? year, SearchMode searchMode)
+    public List<Car> GetCars(string? make, string? model, int? year, SearchMode searchMode, string[]? columns = null)
     {
         // TODO: Dynamic column list as well as dynamic filters?
         IQueryable<Car> query = _igniteService.Cars
             .AsCacheQueryable()
             .Select(x => x.Value);
 
-        if (searchMode == SearchMode.All)
+        if (make != null || model != null || year != null)
+        {
+            query = searchMode switch
+            {
+                SearchMode.All => FilterAll(),
+                _ => FilterAny()
+            };
+        }
+
+        if (columns != null)
+        {
+            // Bad attempt to avoid over-fetching.
+            query = query.Select(x => new Car(
+                columns.Contains(nameof(Car.Make))? x.Make : null!,
+                columns.Contains(nameof(Car.Model))? x.Model : null!,
+                columns.Contains(nameof(Car.Year))? x.Year : 0));
+        }
+
+        return query.ToList();
+
+        IQueryable<Car> FilterAll()
         {
             if (make != null)
             {
@@ -32,14 +53,38 @@ public class CarRepository
             {
                 query = query.Where(x => x.Year == year);
             }
+
+            return query;
         }
-        else
+
+        IQueryable<Car> FilterAny()
         {
-            Expression<Func<Car, bool>> expression = x => x.Make == make || x.Model == model || x.Year == year;
+            var parameter = Expression.Parameter(typeof(Car), "x");
 
-            query = query.Where(expression);
+            Expression? expr = null;
+
+            if (make != null)
+            {
+                expr = Expression.Equal(Expression.PropertyOrField(parameter, "Make"), Expression.Constant(make));
+            }
+
+            if (model != null)
+            {
+                expr = expr == null
+                    ? Expression.Equal(Expression.PropertyOrField(parameter, "Model"), Expression.Constant(model))
+                    : Expression.OrElse(expr, Expression.Equal(Expression.PropertyOrField(parameter, "Model"), Expression.Constant(model)));
+            }
+
+            if (year != null)
+            {
+                expr = expr == null
+                    ? Expression.Equal(Expression.PropertyOrField(parameter, "Year"), Expression.Constant(year))
+                    : Expression.OrElse(expr, Expression.Equal(Expression.PropertyOrField(parameter, "Year"), Expression.Constant(year)));
+            }
+
+            var expression = Expression.Lambda<Func<Car, bool>>(expr!, parameter);
+
+            return query.Where(expression);
         }
-
-        return query.ToList();
     }
 }

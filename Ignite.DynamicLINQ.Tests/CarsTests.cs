@@ -17,7 +17,7 @@ public class CarsTests
         _client = _application.CreateClient();
 
         var cars = _application.Services.GetRequiredService<IgniteService>().Cars;
-        cars[1] = new Car("Ford", "Mustang", 1967, "Red", "Sedan", "Petrol", 7000, 335, 25_000);
+        cars[1] = new Car("Ford", "Mustang", 1967);
     }
 
     [OneTimeTearDown]
@@ -28,9 +28,9 @@ public class CarsTests
     }
 
     [Test]
-    public async Task TestGetCars()
+    public async Task TestGetCars([Values(SearchMode.All, SearchMode.Any)] SearchMode searchMode)
     {
-        var cars = await GetCars("make=Ford&model=Mustang&searchMode=All");
+        var cars = await GetCars("make=Ford&model=Mustang&searchMode=" + searchMode);
 
         Assert.AreEqual(1, cars.Count);
     }
