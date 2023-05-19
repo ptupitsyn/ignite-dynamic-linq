@@ -18,6 +18,7 @@ public class CarsTests
 
         var cars = _application.Services.GetRequiredService<IgniteService>().Cars;
         cars[1] = new Car("Ford", "Mustang", 1967);
+        cars[2] = new Car("Trabant", "600", 1962);
     }
 
     [OneTimeTearDown]
@@ -28,11 +29,16 @@ public class CarsTests
     }
 
     [Test]
-    public async Task TestGetCars([Values(SearchMode.All, SearchMode.Any)] SearchMode searchMode, [Values(true, false)] bool useSql)
+    public async Task TestGetCars(
+        [Values(SearchMode.All, SearchMode.Any)] SearchMode searchMode,
+        [Values(true, false)] bool useSql)
     {
         var cars = await GetCars($"make=Ford&model=Mustang&searchMode={searchMode}&columns=Make,Model&useSql={useSql}");
 
         Assert.AreEqual(1, cars.Count);
+        Assert.AreEqual("Ford", cars[0].Make);
+        Assert.AreEqual("Mustang", cars[0].Model);
+        Assert.AreEqual(0, cars[0].Year);
     }
 
     private async Task<List<Car>> GetCars(string query)
@@ -42,6 +48,7 @@ public class CarsTests
 
         Assert.AreEqual(HttpStatusCode.OK, res.StatusCode, content);
 
-        return JsonSerializer.Deserialize<List<Car>>(content)!;
+        return JsonSerializer.Deserialize<List<Car>>(content,
+            new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!;
     }
 }
