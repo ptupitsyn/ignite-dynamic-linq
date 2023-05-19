@@ -17,10 +17,13 @@ app.MapGet(
             int? year,
             SearchMode? searchMode,
             string? columns,
-            bool? useSql,
+            QueryMode? queryMode,
             [FromServices] CarRepository repo) =>
-        useSql == true
-            ? repo.GetCarsSql(make, model, year, searchMode ?? SearchMode.All, columns?.Split(','))
-            : repo.GetCarsLinq(make, model, year, searchMode ?? SearchMode.All, columns?.Split(',')));
+               queryMode switch
+               {
+                   QueryMode.Linq => repo.GetCarsLinq(make, model, year, searchMode ?? SearchMode.All, columns?.Split(',')),
+                   QueryMode.LinqDynamic => repo.GetCarsLinqDynamic(make, model, year, searchMode ?? SearchMode.All, columns?.Split(',')),
+                   _ => repo.GetCarsSql(make, model, year, searchMode ?? SearchMode.All, columns?.Split(','))
+               });
 
 app.Run();

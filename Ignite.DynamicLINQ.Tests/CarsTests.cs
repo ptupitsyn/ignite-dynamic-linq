@@ -31,9 +31,9 @@ public class CarsTests
     [Test]
     public async Task TestGetCars(
         [Values(SearchMode.All, SearchMode.Any)] SearchMode searchMode,
-        [Values(true, false)] bool useSql)
+        [Values(QueryMode.Sql, QueryMode.Linq, QueryMode.LinqDynamic)] QueryMode queryMode)
     {
-        var cars = await GetCars($"make=Ford&model=Mustang&searchMode={searchMode}&columns=Make,Model&useSql={useSql}");
+        var cars = await GetCars($"make=Ford&model=Mustang&searchMode={searchMode}&columns=Make,Model&queryMode={queryMode}");
 
         Assert.AreEqual(1, cars.Count);
         Assert.AreEqual("Ford", cars[0].Make);

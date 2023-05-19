@@ -92,6 +92,15 @@ public class CarRepository
         }
     }
 
+    public List<Car> GetCarsLinqDynamic(string? make, string? model, int? year, SearchMode searchMode, string[]? columns = null)
+    {
+        IQueryable<Car> query = _igniteService.Cars
+            .AsCacheQueryable()
+            .Select(x => x.Value);
+
+        return query.ToList();
+    }
+
     public List<Car> GetCarsSql(string? make, string? model, int? year, SearchMode searchMode, string[]? columns = null)
     {
         var cols = (columns?.Intersect(AllColumns) ?? AllColumns).ToList();
