@@ -4,7 +4,8 @@ using Ignite.DynamicLINQ.Data;
 
 BenchmarkRunner.Run<CarRepositoryBenchmark>();
 
-class CarRepositoryBenchmark
+[MemoryDiagnoser]
+public class CarRepositoryBenchmark
 {
     private CarRepository _repo = null!;
 
@@ -20,11 +21,11 @@ class CarRepositoryBenchmark
     }
 
     [Benchmark]
-    public List<Car> Linq() => _repo.GetCarsLinq("Ford", "Mustang", 1967, SearchMode.All);
+    public List<Car> Linq() => _repo.GetCarsLinq("Ford", "Mustang", 1967, SearchMode.Any);
 
     [Benchmark]
-    public List<Car> LinqDynamic() => _repo.GetCarsLinqDynamic("Ford", "Mustang", 1967, SearchMode.All);
+    public List<Car> LinqDynamic() => _repo.GetCarsLinqDynamic("Ford", "Mustang", 1967, SearchMode.Any);
 
     [Benchmark]
-    public List<Car> Sql() => _repo.GetCarsSql("Ford", "Mustang", 1967, SearchMode.All);
+    public List<Car> Sql() => _repo.GetCarsSql("Ford", "Mustang", 1967, SearchMode.Any);
 }
