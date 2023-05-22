@@ -70,21 +70,21 @@ public class CarRepository
 
             if (make != null)
             {
-                expr = Expression.Equal(Expression.PropertyOrField(parameter, "Make"), Expression.Constant(make));
+                expr = Expression.Equal(Expression.PropertyOrField(parameter, nameof(Car.Make)), Expression.Constant(make));
             }
 
             if (model != null)
             {
                 expr = expr == null
-                    ? Expression.Equal(Expression.PropertyOrField(parameter, "Model"), Expression.Constant(model))
-                    : Expression.OrElse(expr, Expression.Equal(Expression.PropertyOrField(parameter, "Model"), Expression.Constant(model)));
+                    ? Expression.Equal(Expression.PropertyOrField(parameter, nameof(Car.Model)), Expression.Constant(model))
+                    : Expression.OrElse(expr, Expression.Equal(Expression.PropertyOrField(parameter, nameof(Car.Model)), Expression.Constant(model)));
             }
 
             if (year != null)
             {
                 expr = expr == null
-                    ? Expression.Equal(Expression.PropertyOrField(parameter, "Year"), Expression.Constant(year))
-                    : Expression.OrElse(expr, Expression.Equal(Expression.PropertyOrField(parameter, "Year"), Expression.Constant(year)));
+                    ? Expression.Equal(Expression.PropertyOrField(parameter, nameof(Car.Year)), Expression.Constant(year))
+                    : Expression.OrElse(expr, Expression.Equal(Expression.PropertyOrField(parameter, nameof(Car.Year)), Expression.Constant(year)));
             }
 
             var expression = Expression.Lambda<Func<Car, bool>>(expr!, parameter);
