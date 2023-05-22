@@ -109,11 +109,11 @@ public class CarRepository
 
         query = query.Where(whereSb.ToString(), args.ToArray());
 
-        if (columns != null)
-        {
-            query = (IQueryable<Car>)query.Select("new Car(" + string.Join(", ", columns.Intersect(AllColumns)) + ")");
-        }
-
+        // if (columns != null)
+        // {
+        //     query = (IQueryable<Car>)query.Select("new Car(" + string.Join(", ", columns.Intersect(AllColumns)) + ")");
+        // }
+        //
         return query.ToList();
 
         void AppendArg(object? value, [CallerArgumentExpression(nameof(value))] string? name = default)
