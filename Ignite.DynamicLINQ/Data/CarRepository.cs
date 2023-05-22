@@ -2,6 +2,7 @@ using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Apache.Ignite.Core.Cache;
 using Apache.Ignite.Core.Cache.Query;
 using Apache.Ignite.Linq;
 
@@ -17,9 +18,8 @@ public class CarRepository
 
     public List<Car> GetCarsLinq(string? make, string? model, int? year, SearchMode searchMode, string[]? columns = null)
     {
-        IQueryable<Car> query = _igniteService.Cars
-            .AsCacheQueryable()
-            .Select(x => x.Value);
+        ICache<int,Car> igniteCache = _igniteService.Cars;
+        IQueryable<Car> query = igniteCache.AsCacheQueryable().Select(x => x.Value);
 
         if (make != null || model != null || year != null)
         {
