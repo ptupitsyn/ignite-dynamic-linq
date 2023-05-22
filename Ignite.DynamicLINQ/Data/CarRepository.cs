@@ -100,7 +100,6 @@ public class CarRepository
             .Select(x => x.Value);
 
         var whereSb = new StringBuilder();
-
         var argIdx = 0;
         var args = new List<object>();
         AppendArg(make);
@@ -120,11 +119,10 @@ public class CarRepository
         {
             if (value != null)
             {
-                if (argIdx++ > 0)
+                if (argIdx > 0)
                     whereSb.Append(searchMode == SearchMode.All ? " AND " : " OR ");
 
-                whereSb.Append($"{name} = @{argIdx - 1} ");
-
+                whereSb.Append($"{name} = @{argIdx++} ");
                 args.Add(value);
             }
         }
