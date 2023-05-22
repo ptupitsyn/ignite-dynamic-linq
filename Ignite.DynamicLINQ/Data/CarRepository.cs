@@ -106,7 +106,7 @@ public class CarRepository
         AppendArg(model);
         AppendArg(year);
 
-        query = query.Where(whereSb.ToString(), args.ToArray());
+        query = query.Where(whereSb.ToString(), args.ToArray()); // Ex: make = @0  AND model = @1
 
         // if (columns != null)
         // {
