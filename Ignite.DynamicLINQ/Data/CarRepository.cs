@@ -1,3 +1,4 @@
+using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -98,7 +99,35 @@ public class CarRepository
             .AsCacheQueryable()
             .Select(x => x.Value);
 
+        var whereSb = new StringBuilder();
+
+        var argIdx = 0;
+        var args = new List<object>();
+        AppendArg(make);
+        AppendArg(model);
+        AppendArg(year);
+
+        query = query.Where(whereSb.ToString(), args.ToArray());
+
+        // if (columns != null)
+        // {
+        //     query = (IQueryable<Car>)query.Select("new Car(" + string.Join(", ", columns.Intersect(AllColumns)) + ")");
+        // }
+        //
         return query.ToList();
+
+        void AppendArg(object? value, [CallerArgumentExpression(nameof(value))] string? name = default)
+        {
+            if (value != null)
+            {
+                if (argIdx++ > 0)
+                    whereSb.Append(searchMode == SearchMode.All ? " AND " : " OR ");
+
+                whereSb.Append($"{name} = @{argIdx - 1} ");
+
+                args.Add(value);
+            }
+        }
     }
 
     public List<Car> GetCarsSql(string? make, string? model, int? year, SearchMode searchMode, string[]? columns = null)
